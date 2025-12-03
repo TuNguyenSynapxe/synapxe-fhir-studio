@@ -1,0 +1,48 @@
+
+openapi: 3.1.0
+info:
+  title: Validation Service API
+  version: "v2.3"
+paths:
+  /v1/fhir/validate:
+    post:
+      summary: Validate a FHIR Bundle using Firely .NET Validator
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                projectId:
+                  type: string
+                  format: uuid
+                bundle:
+                  type: object
+                  description: FHIR Bundle JSON
+              required: [projectId, bundle]
+      responses:
+        "200":
+          description: Validation result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: {type: boolean}
+                  data:
+                    type: object
+                    properties:
+                      isValid: {type: boolean}
+                      issues:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            severity: {type: string}
+                            code: {type: string}
+                            details: {type: string}
+                            location: {type: string}
+                  correlationId: {type: string}
+        "400": {description: Invalid request}
+        "500": {description: Internal server error}

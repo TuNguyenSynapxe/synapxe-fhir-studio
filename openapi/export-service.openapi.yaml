@@ -1,0 +1,88 @@
+openapi: 3.1.0
+info:
+  title: Export Service
+  version: 1.0.0
+  description: Packages mapping configuration, sample data, and FHIR templates for export.
+servers:
+  - url: /
+paths:
+  /v1/transform/export/package:
+    post:
+      tags:
+        - export-service
+      operationId: exportTransformationPackage
+      summary: Export transformation package
+      parameters:
+        - name: X-Correlation-Id
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+            example: |
+              {
+                          "schemaId": "uuid",
+                          "mappingId": "uuid",
+                          "resourceModelId": "uuid"
+              }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Bad request / validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          nullable: true
+        warnings:
+          type: array
+          items:
+            type: string
+        correlationId:
+          type: string
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            details:
+              type: array
+              items:
+                type: string
+            target:
+              type: string
+            traceId:
+              type: string
+        correlationId:
+          type: string

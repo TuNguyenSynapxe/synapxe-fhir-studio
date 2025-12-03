@@ -1,0 +1,88 @@
+openapi: 3.1.0
+info:
+  title: Schema Parser Service
+  version: 1.0.0
+  description: Parses legacy schemas (CSV/XML/JSON/XSD) into normalized SchemaDefinition objects.
+servers:
+  - url: /
+paths:
+  /v1/transform/schema/parse:
+    post:
+      tags:
+        - schema-parser-service
+      operationId: parseSchema
+      summary: Parse legacy schema
+      parameters:
+        - name: X-Correlation-Id
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+            example: |
+              {
+                          "sourceType": "csv",
+                          "name": "PutEvent",
+                          "content": "EVENTDATE,EVENTTYPE,..."
+              }
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          description: Bad request / validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          nullable: true
+        warnings:
+          type: array
+          items:
+            type: string
+        correlationId:
+          type: string
+    ErrorResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            details:
+              type: array
+              items:
+                type: string
+            target:
+              type: string
+            traceId:
+              type: string
+        correlationId:
+          type: string

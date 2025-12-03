@@ -1,0 +1,34 @@
+
+openapi: 3.1.0
+info:
+  title: Mapping Engine Service API
+  version: "v2.3"
+paths:
+  /v1/transform/mapping/preview:
+    post:
+      summary: Execute mapping to generate a FHIR Bundle preview
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                projectId: {type: string, format: uuid}
+                mappingId: {type: string, format: uuid}
+                sampleSetId: {type: string, format: uuid}
+                fhirVersion:
+                  type: string
+                  enum: [R4, R5]
+              required: [projectId, mappingId, sampleSetId]
+      responses:
+        "200":
+          description: FHIR Bundle preview
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: {type: boolean}
+                  data: {type: object}
+                  correlationId: {type: string}

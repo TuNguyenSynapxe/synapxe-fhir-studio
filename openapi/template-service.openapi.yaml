@@ -1,0 +1,33 @@
+
+openapi: 3.1.0
+info:
+  title: Template Service API
+  version: "v2.3"
+paths:
+  /v1/templates:
+    get:
+      summary: List FHIR templates available for a given version
+      parameters:
+        - in: query
+          name: fhirVersion
+          required: false
+          schema:
+            type: string
+            enum: [R4, R5]
+      responses:
+        "200":
+          description: Template list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: {type: boolean}
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: {type: string}
+                        name: {type: string}
+                        fhirVersion: {type: string}
